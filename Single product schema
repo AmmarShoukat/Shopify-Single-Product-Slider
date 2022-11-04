@@ -1,0 +1,134 @@
+<!-- nws-lp-product -->
+{% if section.settings.product != blank %}
+  {% assign product = section.settings.product %}
+  <div class="nws-lp-product nws-same-cls nws-one-pdp" {% if section.settings.section-color != blank %}style="background-color:{{ section.settings.section-color }};"{% endif %} >
+    <div class="container" >
+      <div class="nws-lp-product-content row">
+        <div class="col-lg-6 col-sm-12" >
+          {% if section.settings.text-mbg != blank %}<div class="nws-mbg nws-mob-on" ><span>{{ section.settings.text-mbg }}</span></div>{% endif %}
+          {% if section.settings.product-type == 'simple' %}
+           <div class="nws-product-images nws-pdp-slider" >
+             {% for image in product.images %} 
+              {% if image.alt == 'bronzer' %}
+               <img src="{{ image.src | product_img_url: '1000x' }}" alt="{{ image.src | replace: 'products/','' | replace: '.png','' | replace: '.jpg','' | replace: '.jpeg','' }}" />
+              {% endif %}
+             {% endfor %}
+           </div>
+          {% else %}
+            <div class="nws-product-images nws-pdp-option" >
+               {% for image in product.images %} 
+                {% if image.alt != 'bronzer' %}
+                 <img src="{{ image.src | product_img_url: '1000x' }}" data-option="{{ image.alt }}" alt="{{ image.alt }}" />
+                {% endif %}
+               {% endfor %}
+             </div>
+          {% endif %}
+        </div>
+        <div class="col-lg-6 col-sm-12" >
+          <div class="nws-inner-pdp" >
+            {% if section.settings.text-mbg != blank %}<div class="nws-mbg" ><span>{{ section.settings.text-mbg }}</span></div>{% endif %}
+            <h3>{{ product.title }}</h3>
+            <div class="nws-price" >
+              <h5 class="nws-pdp-price" ><i>{{ cart.currency.symbol }}</i>{{ product.price | money_without_currency }}{% if product.compare_at_price > product.price %}<del><i>{{ cart.currency.symbol }}</i>{{ product.compare_at_price | money_without_currency }}</del>{% endif %}</h5>
+              {% if section.settings.text-tax != blank %}<span class="nws-text-tax" >{{ section.settings.text-tax }}</span>{% endif %}
+            </div>
+            
+            {% if product.available %}
+              {% if section.settings.product-type == 'simple' %}
+                <a href="#shopify-section-nws-lp-product-2" class="nws-btn-pdp" >{{ section.settings.btn-name }}</a>
+              {% else %}
+                <div class="nws-selection-name" >SELECT SHADE: <span>{{ product.selected_or_first_available_variant.title }}</span></div>
+                <div class="nws-pdp-variants" >
+                  {% for variant in product.variants %}
+                    {% if variant.available %}
+                      <div data-val="{{ variant.title }}" data-id="{{ variant.id }}" class="nws-pdp-variant {% if product.selected_or_first_available_variant.id == variant.id %}nws-active{% endif %}" >
+                        {% assign vn = variant.image.alt | append: '.png' %}
+                        {% if variant.image != blank %}<img src="{{ vn | file_url }}" />{% endif %}
+                        <input type="radio" name="pdp-id" value="{{ variant.id }}" {% if product.selected_or_first_available_variant.id == variant.id %}checked="checked"{% endif %} />
+                      </div>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+                <a href="/cart/{{product.selected_or_first_available_variant.id}}:1" class="nws-btn-pdp" >{{ section.settings.btn-name }}</a>
+                <!--<button type="button" class="nws-btn-pdp" id="nws-option-pdp" >{{ section.settings.btn-name }}</button>-->
+              {% endif %}
+            {% else %}
+              <button type="button" class="nws-btn-pdp" disabled="disabled" >SOLD OUT</button>
+            {% endif %}
+    
+            {% if section.settings.img-payment != blank %}<div class="nws-img-payment" ><img src="{{ section.settings.img-payment | img_url: '250x' }}" ></div>{% endif %}
+            {% if section.settings.review-text != blank %}
+              <div class="nws-review-section" >
+                {% if section.settings.review-name != blank %}<div class="review-name" >{% render 'nws-green-star' %} {{ section.settings.review-name }}</div>{% endif %}
+                <div class="review-text" >{{ section.settings.review-text }}</div>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endif %}
+<!-- end nws-lp-product -->
+{% schema %}
+{
+  "name": "NWS - LP Product",
+  "settings": [
+    {
+      "type": "color",
+      "id": "section-color",
+      "label": "Section BG Color"
+    },
+    {
+      "type": "select",
+      "label": "Product Type",
+      "options": [
+        {
+          "value": "simple",
+          "label": "Simple"
+        },
+        {
+          "label": "Options",
+          "value": "options"
+        }
+      ],
+      "id": "product-type"
+    },
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Product"
+    },
+    {
+      "type": "text",
+      "id": "text-mbg",
+      "label": "MBG"
+    },
+    {
+      "type": "text",
+      "id": "text-tax",
+      "label": "Tax Label"
+    },
+    {
+      "type": "image_picker",
+      "id": "img-payment",
+      "label": "Payments Logo"
+    },
+    {
+      "type": "text",
+      "id": "review-name",
+      "label": "Review Name"
+    },
+    {
+      "type": "textarea",
+      "id": "review-text",
+      "label": "Review Text"
+    },
+    {
+      "type": "text",
+      "id": "btn-name",
+      "label": "Button Label"
+    }
+  ]
+}
+{% endschema %}
